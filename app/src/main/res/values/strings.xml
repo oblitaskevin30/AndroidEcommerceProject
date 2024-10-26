@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">ProyectoEcommerce</string>
+    <string name="string_crear">Crear</string>
+    <string name="string_eliminar">Eliminar</string>
+    <string name="string_comprado">Comprado</string>
+</resources>

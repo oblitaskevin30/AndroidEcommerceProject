@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    >
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:checked="false"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text=""/>
+    <TextView
+        android:id="@+id/nombre"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/checkbox"
+        android:textStyle="bold"
+        android:layout_marginBottom="30dp"
+        android:textSize="20dp"
+        tools:text = "jonathan Oblitas"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/decripcion"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:layout_marginTop="10dp"
+        tools:text = "telefono"
+        app:layout_constraintTop_toBottomOf="@id/nombre"
+        app:layout_constraintBottom_toBottomOf="@id/checkbox"
+        app:layout_constraintStart_toEndOf="@id/checkbox"
+        />
+
+    <TextView
+        android:id="@+id/prioridad"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textStyle="bold"
+        android:paddingRight="10dp"
+        android:textSize="20dp"
+        tools:text = "alta"
+        android:textColor="@color/design_default_color_error"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/checkbox"
+        />
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
