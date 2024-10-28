@@ -19,8 +19,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var dataBase: ProductSingletonDataBase
     private  lateinit var  adapterProduct: ProductAdapter
 
-    private var categoriasListSeleceted: MutableList<String> = mutableListOf()
     private var tiendaListSeleceted:MutableList<String> = mutableListOf()
+
+    private var categoriaSeleccionada : String? = null
 
     private var categoriasCrearIDs: MutableList<Int> = mutableListOf()
     private var categoriasCrearList: MutableList<String> = mutableListOf()
@@ -33,29 +34,36 @@ class MainActivity : AppCompatActivity() {
 
         dataBase = ProductSingletonDataBase.getDataBase(this)
 
+        adapterProduct = ProductAdapter(dataBase.productDao().getProduct().toMutableList())
+        binding.rvProduct.adapter = adapterProduct
+
         fetchCategorias()
         fetchTiendas()
 
         binding.btnCrear.setOnClickListener {
+
             val intent = Intent(this, CrearActivity::class.java)
             intent.putStringArrayListExtra("CategoriasList", ArrayList(categoriasCrearList))
             intent.putStringArrayListExtra("TiendaList", ArrayList(tiendaCrearList) )
             intent.putIntegerArrayListExtra("CategoriasId", ArrayList(categoriasCrearIDs) )
-
             startActivity(intent)
+
         }
 
         binding.btnEliminar.setOnClickListener{
-
+            eliminarProductosSeleccionados()
         }
 
-        binding.rvProduct.adapter = ProductAdapter(dataBase.productDao().getProduct())
+        binding.btnComprado.setOnClickListener(){
+            marcarComoComprado()
+        }
+
+
     }
 
     override fun onResume() {
         super.onResume()
-        binding.rvProduct.adapter = ProductAdapter(dataBase.productDao().getProduct())
-
+        adapterProduct.actualizarLista(dataBase.productDao().getProduct().toMutableList())
 
     }
 
@@ -99,10 +107,17 @@ class MainActivity : AppCompatActivity() {
 
                 newChip.setOnCheckedChangeListener{_,isChecked->
                     if(isChecked){
-                        categoriasListSeleceted.add(chipCat.name)
+
+                        categoriaSeleccionada = chipCat.name
+
                     }else{
-                        categoriasListSeleceted.remove(chipCat.name)
+                        if(categoriaSeleccionada == chipCat.name){
+                            categoriaSeleccionada = null
+                        }
+
                     }
+
+                    filtrarPorCategoria()
                 }
 
                 binding.chipGroupCategorias.addView(newChip)
@@ -136,6 +151,8 @@ class MainActivity : AppCompatActivity() {
             })
 
     }
+
+
     fun makechipsTienda(listaTienda : List<Tienda>){
         binding.chipGroupTiendas.removeAllViews()
         listaTienda.forEach { chipTienda ->
@@ -152,6 +169,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+            filtrarPorTiendas()
+
             binding.chipGroupTiendas.addView(newChip)
 
         }
@@ -163,8 +182,66 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun deleteProduct(product: Product){
-        dataBase.productDao().deleteProduct(product)
+    private fun eliminarProductosSeleccionados(){
+
+        val productosSeleccionados = adapterProduct.getProductosSeleccionados()
+
+        if(productosSeleccionados.isNotEmpty()){
+            productosSeleccionados.forEach {
+                producto ->
+                dataBase.productDao().deleteProduct(producto)
+                Toast.makeText(this, "Productos eliminados", Toast.LENGTH_SHORT).show()
+            }
+        }else{
+            Toast.makeText(this, "No hay productos seleccionados", Toast.LENGTH_SHORT).show()
+        }
+
+        adapterProduct.actualizarLista(productosSeleccionados.toMutableList())
+
+    }
+
+    private fun marcarComoComprado() {
+
+        val productosSeleccionados  = adapterProduct.getProductosSeleccionados()
+
+        if (productosSeleccionados.isNotEmpty()) {
+
+
+            productosSeleccionados.forEach { product ->
+                product.comprado = !product.comprado
+                dataBase.productDao().updateProduct(product)
+
+            }
+            adapterProduct.actualizarLista(dataBase.productDao().getProduct())
+
+            Toast.makeText(this, "Productos marcados como comprados", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            Toast.makeText(this, "No hay productos seleccionados", Toast.LENGTH_SHORT).show()
+        }
+
+
+        adapterProduct.notifyDataSetChanged()
+    }
+
+    private fun filtrarPorCategoria(){
+
+        val productosFiltrados = if (categoriaSeleccionada != null) {
+            dataBase.productDao().getProductsByCategoria(categoriaSeleccionada!!)
+        } else {
+            dataBase.productDao().getProduct()
+        }
+        adapterProduct.actualizarLista(productosFiltrados.toMutableList())
+
+    }
+
+    private fun filtrarPorTiendas(){
+        val productosFiltrados = if (tiendaListSeleceted.isNotEmpty()) {
+            dataBase.productDao().getProductsByMultiplesTiendas(tiendaListSeleceted)
+        } else {
+            dataBase.productDao().getProduct()
+        }
+        adapterProduct.actualizarLista(productosFiltrados.toMutableList())
     }
 
 }

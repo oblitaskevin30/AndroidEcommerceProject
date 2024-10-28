@@ -12,5 +12,6 @@ data class Product(
     val categoria : String,
     val tiendas : String,
     val prioridad : Boolean,
-    val notasAdicionales : String
+    val notasAdicionales : String,
+    var comprado : Boolean = false
 )

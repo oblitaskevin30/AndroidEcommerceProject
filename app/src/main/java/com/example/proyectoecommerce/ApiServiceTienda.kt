@@ -12,4 +12,7 @@ interface ApiServiceTienda {
     fun getTiendaById(
         @Query("id") id: Int
     ): Call<Tienda>
+
+
+
 }

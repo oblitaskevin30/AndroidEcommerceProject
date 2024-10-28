@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.proyectoecommerce.databinding.ActivityCrearBinding
+import com.example.proyectoecommerce.databinding.ActivityMainBinding
 import com.google.android.material.chip.Chip
 
 
@@ -26,6 +27,7 @@ class CrearActivity : AppCompatActivity() {
 
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCrearBinding.inflate(layoutInflater)
@@ -39,6 +41,30 @@ class CrearActivity : AppCompatActivity() {
 
         makeChipsTienda(tiendaList)
         configCategoria(categoriasList,categoriasId)
+
+        val idProduct = intent.getIntExtra("idProduct", 0)
+        if (idProduct != 0) {
+            // Solo si idProduct no es 0, significa que se está editando
+            val nombre = intent.getStringExtra("nombre") ?: ""
+            val cantidad = intent.getIntExtra("cantidad", 0)
+            val categoria = intent.getStringExtra("categoria") ?: ""
+            val tiendas = intent.getStringExtra("tiendas") ?: ""
+            val prioridad = intent.getBooleanExtra("prioridad", false)
+            val notasAdicionales = intent.getStringExtra("notasAdicionales") ?: ""
+
+
+            binding.nombreProducto.setText(nombre)
+            binding.cantidadProducto.setText(cantidad.toString())
+            binding.spinerCategorias.setSelection(categoriasList.indexOf(categoria))
+
+            tiendaList.forEach { chipText ->
+                if (tiendas.contains(chipText)) {
+                    binding.chipGroupTienda.findViewById<Chip>(chipText.hashCode()).isChecked = true
+                }
+            }
+            binding.switchPrioridad.isChecked = prioridad
+            binding.textAreaProducto.setText(notasAdicionales)
+        }
 
 
         binding.btnRegresar.setOnClickListener {
@@ -71,11 +97,9 @@ class CrearActivity : AppCompatActivity() {
 
                 priority = binding.switchPrioridad.isChecked
 
-
-
-
                 var productoNuevo =
-                    Product(nombre = productName,
+                    Product(
+                        nombre = productName,
                         cantidad = productCant.toInt(),
                         categoria = category,
                         tiendas = store,
@@ -83,13 +107,25 @@ class CrearActivity : AppCompatActivity() {
                         notasAdicionales = adicionalText
                     )
 
-                database.productDao().saveProduct(productoNuevo)
+                if (idProduct != 0) {
+                    var idProduct = idProduct
+                    var productoModificar =
+                        Product(
+                            idProduct=idProduct,
+                            nombre = productName,
+                            cantidad = productCant.toInt(),
+                            categoria = category,
+                            tiendas = store,
+                            prioridad = priority,
+                            notasAdicionales = adicionalText
+                        )
+                    val mensajeConfirmacion : String = "modificar"
+                    showAlertDialogModificar(productoModificar,mensajeConfirmacion)
+                } else {
+                    val mensajeCreado : String = "crear"
+                    showAlertDialogCrear(productoNuevo,mensajeCreado)
+                }
 
-                val dialog = AlertDialog.Builder(this)
-                dialog.setTitle("excelente")
-                dialog.setMessage("producto creado correctamente")
-                dialog.setCancelable(true)
-                dialog.show()
 
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
@@ -111,7 +147,6 @@ class CrearActivity : AppCompatActivity() {
         }
 
     }
-
 
     private fun configCategoria(listCategorias: ArrayList<String>,categoriasIds: ArrayList<Int>) {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, listCategorias)
@@ -137,6 +172,50 @@ class CrearActivity : AppCompatActivity() {
             }
 
         }
+    }
+
+    fun showAlertDialogCrear(product: Product , mensaje : String) {
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Confirmación")
+        builder.setMessage("¿Quieres ${mensaje} el producto ${product.nombre}?")
+
+        builder.setPositiveButton("Confirmar") { dialog, _ ->
+            database.productDao().saveProduct(product)
+            val next = Intent(this, ActivityMainBinding::class.java)
+            startActivity(next)
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancelar") { dialog, _ ->
+
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    fun showAlertDialogModificar(product: Product , mensaje : String) {
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Confirmación")
+        builder.setMessage("¿Quieres ${mensaje} el producto ${product.nombre}?")
+
+        builder.setPositiveButton("Confirmar") { dialog, _ ->
+            database.productDao().updateProduct(product)
+            val next = Intent(this, ActivityMainBinding::class.java)
+            startActivity(next)
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancelar") { dialog, _ ->
+
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
 }

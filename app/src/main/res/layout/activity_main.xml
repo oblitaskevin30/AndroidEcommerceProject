@@ -25,6 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:singleSelection="false"
+            tools:text="Desarrollo"
             app:chipSpacing="8dp">
         </com.google.android.material.chip.ChipGroup>
 
@@ -36,7 +37,6 @@
         android:layout_height="wrap_content"
         android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/horizontalGroupTiendas"
-        app:layout_constraintBottom_toTopOf="@id/rvProduct"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:scrollbars="none"
@@ -66,12 +66,26 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvProduct"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:paddingBottom="25dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/fondo"
         app:layout_constraintTop_toBottomOf="@id/horizontalGroupCat"
-        tools:layout_editor_absoluteX="3dp"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="0dp"
         tools:listitem="@layout/item_product" />
+
+    <TextView
+        android:id="@+id/fondo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:height="95dp"
+
+        />
+
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/btnCrear"

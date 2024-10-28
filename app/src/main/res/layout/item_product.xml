@@ -11,6 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:checked="false"
+        android:paddingTop="50dp"
+        android:paddingBottom="50dp"
         app:layout_constraintStart_toStartOf="parent"
         android:text=""/>
     <TextView
@@ -28,16 +30,18 @@
 
     <TextView
         android:id="@+id/decripcion"
-        android:layout_marginLeft="10dp"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
-        tools:text = "telefono"
-        app:layout_constraintTop_toBottomOf="@id/nombre"
-        app:layout_constraintBottom_toBottomOf="@id/checkbox"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@id/categoriaView"
         app:layout_constraintStart_toEndOf="@id/checkbox"
-        />
+        app:layout_constraintTop_toBottomOf="@id/nombre"
+
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="telefono" />
 
     <TextView
         android:id="@+id/prioridad"
@@ -52,6 +56,22 @@
         android:textColor="@color/design_default_color_error"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/checkbox"
+        />
+    <TextView
+        android:id="@+id/categoriaView"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:textStyle="bold"
+        android:paddingRight="10dp"
+        android:textSize="20dp"
+        tools:text = "categoria"
+        android:textColor="@color/design_default_color_error"
+        app:layout_constraintTop_toBottomOf="@+id/decripcion"
+        app:layout_constraintBottom_toBottomOf="@+id/checkbox"
+        app:layout_constraintStart_toEndOf="@+id/checkbox"
+
         />
 
 
